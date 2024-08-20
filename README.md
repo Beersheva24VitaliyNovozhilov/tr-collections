@@ -1,10 +1,10 @@
 # Telran Collections Framework
 
-1. Telran Collections Framework
+1. Telran Collections Framework - HW 20
 
 ## HWs/CWs
 
-* CW/HW 20 - Collections
+* CW/HW 20 - Collections, Generics, List, ArrayList. Parallel streams
 
 ## Contributing
 
