@@ -9,21 +9,21 @@ import java.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import org.slf4j.Logger;
 
 public abstract class CollectionTest {
 
-    private static Logger logger = org.slf4j.LoggerFactory.getLogger(Collection.class);
 
     protected Collection<Integer> collection;
 
     Integer[] array = { 3, -10, 20, 1, 10, 8, 100, 17 };
+
     @BeforeEach
     void setUp() {
         Arrays.stream(array).forEach(collection::add);
     }
 
-    // This two next test methods are overrided in the subclass and technically do not invoke by JUnit Runner
+    // This two next test methods are overrided in the subclass and technically do
+    // not invoke by JUnit Runner
     @Test
     void testAdd() {
         assertTrue(collection.add(200));
@@ -43,6 +43,7 @@ public abstract class CollectionTest {
     void testSize() {
         assertEquals(array.length, collection.size());
     }
+
     @Test
     void testIsEmpty() {
         assertFalse(collection.isEmpty());
@@ -54,32 +55,62 @@ public abstract class CollectionTest {
         assertFalse(collection.contains(-100));
     }
 
-    // Test performance of stream and parallelStream
     @Test
-    void testStreamsPerformance() {
-
-        for (int i = 0; i < 100; i++) {
+    void testParallelStreamSortWithForEachOrdered() {
+        for (int i = 0; i < 200; i++) {
             collection.add(i);
         }
 
-        long sequentialTime = measureTime(() -> collection.stream().forEach(this::simulateWork));
-        long parallelTime = measureTime(() -> collection.parallelStream().forEach(this::simulateWork));
+        List<Integer> result = new ArrayList<>();
 
-        logger.info("Parallel time: [{}], Sequential time: [{}]", parallelTime, sequentialTime);
+        collection.parallelStream()
+                .sorted()
+                .forEachOrdered(result::add);
 
-        assertTrue(parallelTime < sequentialTime);
+        assertTrue(isSorted(result), "Parallel stream with forEachOrdered result should be sorted");
     }
 
-    private long measureTime(Runnable task) {
-        long start = System.nanoTime();
-        task.run();
-        return System.nanoTime() - start;
-    }
-
-    private void simulateWork(Integer n) {
-        long startTime = System.nanoTime();
-        while (System.nanoTime() - startTime < 10_000_000) {
-            // do nothing, think better than Thread.sleep()
+    @Test
+    void testParallelStreamSort() {
+        for (int i = 0; i < 200; i++) {
+            collection.add(i);
         }
+
+        List<Integer> result = new ArrayList<>();
+
+        collection.parallelStream()
+                .sorted()
+                .forEach(result::add);
+
+        assertFalse(isSorted(result), "Parallel stream result should not be sorted");
     }
+
+    @Test
+    void testSequentialStreamSort() {
+
+        for (int i = 0; i < 200; i++) {
+            collection.add(i);
+        }
+
+        List<Integer> result = new ArrayList<>();
+
+        collection.stream()
+                .sorted()
+                .forEach(result::add);
+
+        assertTrue(isSorted(result), "Sequential stream result should be sorted");
+    }
+
+    private boolean isSorted(List<Integer> list) {
+        int i = 1;
+        boolean sorted = true;
+
+        while (i < list.size() && sorted) {
+            sorted = list.get(i) >= list.get(i - 1);
+            i++;
+        }
+
+        return sorted;
+    }
+
 }

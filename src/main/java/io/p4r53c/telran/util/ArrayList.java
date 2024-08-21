@@ -52,12 +52,13 @@ public class ArrayList<T> implements List<T> {
      */
     @Override
     public boolean remove(T pattern) {
+        boolean removed = false;
         int index = indexOf(pattern);
-        if (index < 0) {
-            return false;
+        if (index >= 0) {
+            remove(index);
+            removed = true;
         }
-        remove(index);
-        return true;
+        return removed;
     }
 
     /**

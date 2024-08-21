@@ -68,4 +68,5 @@ public interface Collection<T> extends Iterable<T> {
     default Stream<T> parallelStream() {
         return StreamSupport.stream(spliterator(), true);
     }
+    
 }
