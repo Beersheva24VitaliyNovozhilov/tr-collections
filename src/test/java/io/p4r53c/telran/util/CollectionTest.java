@@ -18,12 +18,12 @@ public abstract class CollectionTest {
     protected Collection<Integer> collection;
 
     Integer[] array = { 3, -10, 20, 1, 10, 8, 100, 17 };
-
     @BeforeEach
     void setUp() {
         Arrays.stream(array).forEach(collection::add);
     }
 
+    // This two next test methods are overrided in the subclass and technically do not invoke by JUnit Runner
     @Test
     void testAdd() {
         assertTrue(collection.add(200));
@@ -32,20 +32,18 @@ public abstract class CollectionTest {
         assertEquals(array.length + 2, collection.size());
     }
 
-    @Test
+    @Test()
     void testRemove() {
-        assertTrue(collection.remove(100));
-        assertEquals(7, collection.size());
-
-        assertFalse(collection.remove(-100));
-        assertEquals(7, collection.size());
+        assertTrue(collection.remove(3));
+        assertEquals(array.length - 1, collection.size());
+        assertFalse(collection.remove(1000));
     }
 
     @Test
     void testSize() {
         assertEquals(array.length, collection.size());
     }
-
+    @Test
     void testIsEmpty() {
         assertFalse(collection.isEmpty());
     }
@@ -54,16 +52,6 @@ public abstract class CollectionTest {
     void testContains() {
         assertTrue(collection.contains(17));
         assertFalse(collection.contains(-100));
-    }
-
-    @Test
-    void testIterator() {
-        Integer[] expected = { 3, -10, 20, 1, 10, 8, 100, 17, 200, 17 };
-
-        int i = 0;
-        for (Integer e : collection) {
-            assertEquals(expected[i++], e);
-        }
     }
 
     // Test performance of stream and parallelStream

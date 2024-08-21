@@ -50,7 +50,6 @@ public abstract class ListTest extends CollectionTest {
 
     @Test
     public void testGet() {
-
         assertEquals(3, list.get(0));
         assertEquals(-10, list.get(1));
         assertEquals(10, list.get(4));
@@ -68,17 +67,6 @@ public abstract class ListTest extends CollectionTest {
     }
 
     @Test
-    void testIteratorRemove() {
-        Iterator<Integer> iterator = list.iterator();
-        iterator.next();
-        iterator.remove(); // Just remove first element
-
-        assertEquals(7, list.size());
-        assertEquals(-10, list.get(0));
-        assertEquals(20, list.get(1));
-    }
-
-    @Test
     public void testLastIndexOf() {
         list.add(8, 17);
 
@@ -88,6 +76,27 @@ public abstract class ListTest extends CollectionTest {
 
         assertEquals(8, list.lastIndexOf(17));
         assertEquals(-1, list.lastIndexOf(1000));
+    }
+
+    @Test
+    void testIterator() {
+        Integer[] expected = { 3, -10, 20, 1, 10, 8, 100, 17, 200, 17 };
+
+        int i = 0;
+        for (Integer e : list) {
+            assertEquals(expected[i++], e);
+        }
+    }
+
+    @Test
+    void testIteratorNextAndRemove() {
+        Iterator<Integer> iterator = list.iterator();
+        iterator.next();
+        iterator.remove(); // Just remove first element
+
+        assertEquals(7, list.size());
+        assertEquals(-10, list.get(0));
+        assertEquals(20, list.get(1));
     }
 
     private Integer[] fromList(List<Integer> list) {
