@@ -51,4 +51,17 @@ public interface List<T> extends Collection<T> {
      */
     int lastIndexOf(T pattern);
 
+    /**
+     * Checks if the given index is within the bounds of the list.
+     *
+     * @param index       the index to be checked
+     * @param isInclusive whether the upper bound should be inclusive
+     */
+    default void checkIndex(int index, boolean isInclusive) {
+        int limit = isInclusive ? size() : size() - 1;
+
+        if (index < 0 || index > limit) {
+            throw new IndexOutOfBoundsException(index);
+        }
+    }
 }

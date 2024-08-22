@@ -1,10 +1,13 @@
 # Telran Collections Framework
 
-1. Telran Collections Framework - HW 20
+## Build and Test status
+
+[![Java CI with Maven](https://github.com/Beersheva24VitaliyNovozhilov/tr-collections/actions/workflows/maven.yml/badge.svg)](https://github.com/Beersheva24VitaliyNovozhilov/tr-collections/actions/workflows/maven.yml)
 
 ## HWs/CWs
 
-* CW/HW 20 - Collections, Generics, List, ArrayList. Parallel streams
+* CW/HW 20 - Collections, Generics, List, ArrayList. StreamsAPI
+* CW/HW 21 - LinkedList
 
 ## Contributing
 
