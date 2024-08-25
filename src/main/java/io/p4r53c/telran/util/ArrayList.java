@@ -169,7 +169,7 @@ public class ArrayList<T> implements List<T> {
 
         while (right < size) {
             if (predicate.test((T) array[right])) {
-
+                array[right] = null;
                 right++;
             } else {
                 array[left++] = array[right++];
