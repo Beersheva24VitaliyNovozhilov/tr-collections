@@ -4,8 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
-import java.util.Iterator;
-
 import org.junit.jupiter.api.Test;
 
 public abstract class ListTest extends CollectionTest {
@@ -86,17 +84,6 @@ public abstract class ListTest extends CollectionTest {
         for (Integer e : list) {
             assertEquals(expected[i++], e);
         }
-    }
-
-    @Test
-    void testIteratorNextAndRemove() {
-        Iterator<Integer> iterator = list.iterator();
-        iterator.next();
-        iterator.remove(); // Just remove first element
-
-        assertEquals(7, list.size());
-        assertEquals(-10, list.get(0));
-        assertEquals(20, list.get(1));
     }
 
     private Integer[] fromList(List<Integer> list) {

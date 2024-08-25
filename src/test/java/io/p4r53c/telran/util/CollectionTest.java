@@ -2,28 +2,36 @@ package io.p4r53c.telran.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Random;
+
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
-
 public abstract class CollectionTest {
-
 
     protected Collection<Integer> collection;
 
     Integer[] array = { 3, -10, 20, 1, 10, 8, 100, 17 };
+
+    private static final int N_ELEMENTS = 10_000_000;
+
+    private Random random = new Random();
 
     @BeforeEach
     void setUp() {
         Arrays.stream(array).forEach(collection::add);
     }
 
-    // This two next test methods are overrided in the subclass and technically do
-    // not invoke by JUnit Runner
     @Test
     void testAdd() {
         assertTrue(collection.add(200));
@@ -37,6 +45,43 @@ public abstract class CollectionTest {
         assertTrue(collection.remove(3));
         assertEquals(array.length - 1, collection.size());
         assertFalse(collection.remove(1000));
+    }
+
+    @Test
+    void testRemoveIf() {
+        assertTrue(collection.removeIf(n -> n % 2 == 0));
+        assertFalse(collection.removeIf(n -> n % 2 == 0));
+        assertTrue(collection.stream().allMatch(n -> n % 2 != 0));
+    }
+
+    @Test
+    void testClear() {
+        collection.clear();
+        assertTrue(collection.isEmpty());
+
+    }
+
+    @Test
+    void testIteratorRemove() {
+        Iterator<Integer> iterator = collection.iterator();
+
+        assertThrowsExactly(IllegalStateException.class, () -> iterator.remove());
+
+        Integer next = iterator.next();
+        iterator.remove();
+
+        assertFalse(collection.contains(next));
+        assertThrowsExactly(IllegalStateException.class, () -> iterator.remove());
+    }
+
+    @Test
+    void testPerformance() {
+        collection.clear();
+
+        // 10_000_000 elements (very fast)
+        IntStream.range(0, N_ELEMENTS).forEach(i -> collection.add(random.nextInt()));
+        assertEquals(N_ELEMENTS, collection.size()); // Temporary assertion for linter
+        collection.clear();
     }
 
     @Test
@@ -57,6 +102,8 @@ public abstract class CollectionTest {
 
     @Test
     void testParallelStreamSortWithForEachOrdered() {
+        collection.clear();
+
         for (int i = 0; i < 200; i++) {
             collection.add(i);
         }
@@ -70,13 +117,27 @@ public abstract class CollectionTest {
         assertTrue(isSorted(result), "Parallel stream with forEachOrdered result should be sorted");
     }
 
-    @Test
+    /**
+     * Tests if parallel stream sorting produces an unsorted result.
+     * 
+     * Undefined behavior. Randomly throws ArrayIndexOutOfBoundsException with
+     * {@link io.p4r53c.telran.util.ArrayList}
+     * 
+     * I am not sure what is actually wrong, but probably it is synchronization
+     * issue.
+     * 
+     * As a first approximation I used A thread-safe variant of
+     * {@link java.util.ArrayList} - {@link CopyOnWriteArrayList}.
+     */
+    @RepeatedTest(5)
     void testParallelStreamSort() {
+        collection.clear();
+
         for (int i = 0; i < 200; i++) {
             collection.add(i);
         }
 
-        List<Integer> result = new ArrayList<>();
+        CopyOnWriteArrayList<Integer> result = new CopyOnWriteArrayList<Integer>();
 
         collection.parallelStream()
                 .sorted()
@@ -87,6 +148,7 @@ public abstract class CollectionTest {
 
     @Test
     void testSequentialStreamSort() {
+        collection.clear();
 
         for (int i = 0; i < 200; i++) {
             collection.add(i);
@@ -113,4 +175,15 @@ public abstract class CollectionTest {
         return sorted;
     }
 
+    private boolean isSorted(CopyOnWriteArrayList<Integer> result) {
+        int i = 1;
+        boolean sorted = true;
+
+        while (i < result.size() && sorted) {
+            sorted = result.get(i) >= result.get(i - 1);
+            i++;
+        }
+
+        return sorted;
+    }
 }

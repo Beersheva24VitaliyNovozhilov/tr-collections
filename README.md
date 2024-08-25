@@ -8,6 +8,7 @@
 
 * CW/HW 20 - Collections, Generics, List, ArrayList. StreamsAPI
 * CW/HW 21 - LinkedList
+* CW/HW 22 - Iterator remove/removeIf in ArrayList
 
 ## Contributing
 

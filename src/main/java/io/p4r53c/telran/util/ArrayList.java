@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.Arrays;
 import java.util.Objects;
 
+import java.util.function.Predicate;
+
 import java.util.NoSuchElementException;
 
 /**
@@ -144,6 +146,40 @@ public class ArrayList<T> implements List<T> {
         size--;
 
         return removedObject;
+    }
+
+    /**
+     * Removes elements from the collection that match the given predicate.
+     * 
+     * Algorithm complexity: O(n) - two pointers, left - starting from the
+     * beginning, right - passing through the array
+     * 
+     * Memory complexity: O(1) - in-place, no additional memory allocated
+     * 
+     * I think it looks like deque: https://en.wikipedia.org/wiki/Double-ended_queue
+     *
+     * @param predicate a predicate to test elements for removal
+     * @return true if any elements were removed, false otherwise
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public boolean removeIf(Predicate<T> predicate) {
+        int left = 0;
+        int right = 0;
+
+        while (right < size) {
+            if (predicate.test((T) array[right])) {
+
+                right++;
+            } else {
+                array[left++] = array[right++];
+            }
+        }
+
+        int removed = size - left;
+        size = left;
+
+        return removed > 0;
     }
 
     /**
