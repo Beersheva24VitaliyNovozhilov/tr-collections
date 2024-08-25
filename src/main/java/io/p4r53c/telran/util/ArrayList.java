@@ -3,6 +3,7 @@ package io.p4r53c.telran.util;
 import java.util.Iterator;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import java.util.NoSuchElementException;
 
@@ -45,23 +46,6 @@ public class ArrayList<T> implements List<T> {
     }
 
     /**
-     * Removes the first occurrence of given element in the list.
-     *
-     * @param pattern the element to be removed
-     * @return true if the element was found and removed, false otherwise
-     */
-    @Override
-    public boolean remove(T pattern) {
-        boolean removed = false;
-        int index = indexOf(pattern);
-        if (index >= 0) {
-            remove(index);
-            removed = true;
-        }
-        return removed;
-    }
-
-    /**
      * Returns the number of elements in the list.
      *
      * @return the number of elements in the list
@@ -79,17 +63,6 @@ public class ArrayList<T> implements List<T> {
     @Override
     public boolean isEmpty() {
         return size == 0;
-    }
-
-    /**
-     * Returns true if the list contains given element.
-     *
-     * @param pattern the element to be searched for
-     * @return true if the list contains given element, false otherwise
-     */
-    @Override
-    public boolean contains(T pattern) {
-        return indexOf(pattern) >= 0;
     }
 
     /**
@@ -137,11 +110,11 @@ public class ArrayList<T> implements List<T> {
      */
     @Override
     public void add(int index, T obj) {
-        if (index < 0 || index > size) {
-            throw new IndexOutOfBoundsException();
-        }
+        checkIndex(index, true);
 
-        reallocate();
+        if (size == array.length) {
+            reallocate();
+        }
 
         System.arraycopy(array, index, array, index + 1, size - index);
         array[index] = obj;
@@ -199,7 +172,7 @@ public class ArrayList<T> implements List<T> {
     @Override
     public int indexOf(T pattern) {
         int index = 0;
-        while (index < size && !equals(array[index], pattern)) {
+        while (index < size && !Objects.equals(array[index], pattern)) {
             index++;
         }
         return index == size ? -1 : index;
@@ -215,7 +188,7 @@ public class ArrayList<T> implements List<T> {
     @Override
     public int lastIndexOf(T pattern) {
         int index = size - 1;
-        while (index >= 0 && !equals(array[index], pattern)) {
+        while (index >= 0 && !Objects.equals(array[index], pattern)) {
             index--;
         }
         return index;
@@ -226,16 +199,5 @@ public class ArrayList<T> implements List<T> {
      */
     private void reallocate() {
         array = Arrays.copyOf(array, array.length * 2);
-    }
-
-    /**
-     * Compares two objects for equality.
-     *
-     * @param obj1 the first object
-     * @param obj2 the second object
-     * @return true if the objects are equal, false otherwise
-     */
-    private boolean equals(Object obj1, Object obj2) {
-        return obj1 == null ? obj2 == null : obj1.equals(obj2);
     }
 }

@@ -64,4 +64,32 @@ public interface List<T> extends Collection<T> {
             throw new IndexOutOfBoundsException(index);
         }
     }
+
+    /**
+     * Removes the first occurrence of given element in the list.
+     *
+     * @param pattern the element to be removed
+     * @return true if the element was found and removed, false otherwise
+     */
+    @Override
+    default boolean remove(T pattern) {
+        boolean removed = false;
+        int index = indexOf(pattern);
+        if (index >= 0) {
+            remove(index);
+            removed = true;
+        }
+        return removed;
+    }
+
+    /**
+     * Returns true if the list contains the given element.
+     *
+     * @param pattern the element to be searched for
+     * @return true if the list contains the given element, false otherwise
+     */
+    @Override
+    default boolean contains(T pattern) {
+        return indexOf(pattern) > -1;
+    }
 }

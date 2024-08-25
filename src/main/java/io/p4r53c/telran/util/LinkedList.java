@@ -80,25 +80,6 @@ public class LinkedList<T> implements List<T> {
     }
 
     /**
-     * Removes the first occurrence of the given element in the list.
-     *
-     * @param pattern the element to be removed
-     * @return true if the element was found and removed, false otherwise
-     */
-    @Override
-    public boolean remove(T pattern) {
-        int index = indexOf(pattern);
-        boolean removed = false;
-
-        if (index > -1) {
-            remove(index);
-            removed = true;
-        }
-
-        return removed;
-    }
-
-    /**
      * Returns the number of elements in the list.
      *
      * @return the number of elements in the list
@@ -118,16 +99,7 @@ public class LinkedList<T> implements List<T> {
         return size == 0;
     }
 
-    /**
-     * Returns true if the list contains the given element.
-     *
-     * @param pattern the element to be searched for
-     * @return true if the list contains the given element, false otherwise
-     */
-    @Override
-    public boolean contains(T pattern) {
-        return indexOf(pattern) > -1;
-    }
+   
 
     /**
      * Returns an iterator over the elements of the list.
@@ -162,7 +134,7 @@ public class LinkedList<T> implements List<T> {
      */
     @Override
     public T remove(int index) {
-        checkIndex(index, true);
+        checkIndex(index, false);
 
         Node<T> node = getNode(index);
         T obj = node.obj;
@@ -196,12 +168,12 @@ public class LinkedList<T> implements List<T> {
         Node<T> current = head;
         int index = 0;
 
-        while (index < size && !Objects.equals(current.obj, pattern)) {
+        while (current != null && !Objects.equals(current.obj, pattern)) {
             index++;
             current = current.next;
         }
 
-        return index < size ? index : -1;
+        return current != null ? index : -1;
     }
 
     /**
