@@ -1,5 +1,6 @@
 package io.p4r53c.telran.util;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
@@ -9,6 +10,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Random;
 
+import java.util.concurrent.TimeUnit;
+
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import java.util.stream.IntStream;
@@ -16,6 +19,7 @@ import java.util.stream.IntStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 public abstract class CollectionTest {
 
@@ -23,7 +27,7 @@ public abstract class CollectionTest {
 
     Integer[] array = { 3, -10, 20, 1, 10, 8, 100, 17 };
 
-    private static final int N_ELEMENTS = 10_000_000;
+    private static final int N_ELEMENTS = 2_000_000;
 
     private Random random = new Random();
 
@@ -33,11 +37,16 @@ public abstract class CollectionTest {
     }
 
     @Test
-    void testAdd() {
+    void testNonExistingAdd() {
         assertTrue(collection.add(200));
-        assertTrue(collection.add(17));
 
-        assertEquals(array.length + 2, collection.size());
+        runTest(new Integer[] { 3, -10, 20, 1, 10, 8, 100, 17, 200 });
+    }
+
+    @Test
+    void testExistingAdd() {
+        assertTrue(collection.add(17));
+        runTest(new Integer[] { 3, -10, 20, 1, 10, 8, 100, 17, 17 });
     }
 
     @Test()
@@ -74,14 +83,21 @@ public abstract class CollectionTest {
         assertThrowsExactly(IllegalStateException.class, () -> iterator.remove());
     }
 
+    // GitHub Actions workers can be slow and the test can fail during the build in
+    // pipeline.
+    // So I set a much larger timeout. This shows that such tests are also
+    // not a very good solution.
     @Test
+    @Timeout(value = 5000, unit = TimeUnit.MILLISECONDS)
     void testPerformance() {
         collection.clear();
 
-        // 10_000_000 elements (very fast)
         IntStream.range(0, N_ELEMENTS).forEach(i -> collection.add(random.nextInt()));
-        assertEquals(N_ELEMENTS, collection.size()); // Temporary assertion for linter
+        collection.removeIf(n -> n % 2 == 0);
+        assertTrue(collection.stream().allMatch(n -> n % 2 != 0));
+
         collection.clear();
+        assertTrue(collection.isEmpty());
     }
 
     @Test
@@ -185,5 +201,10 @@ public abstract class CollectionTest {
         }
 
         return sorted;
+    }
+
+    protected void runTest(Integer[] expected) {
+        assertArrayEquals(expected, collection.stream().toArray(Integer[]::new));
+        assertEquals(expected.length, collection.size());
     }
 }

@@ -16,7 +16,6 @@ public abstract class ListTest extends CollectionTest {
         list = (List<Integer>) collection;
     }
 
-    @Override
     @Test
     void testAdd() {
         list.add(8, 2000);
