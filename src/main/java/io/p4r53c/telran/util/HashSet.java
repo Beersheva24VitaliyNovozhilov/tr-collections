@@ -268,6 +268,9 @@ public class HashSet<T> implements Set<T> {
      * Reallocates the hash table by creating a new one with twice the size and
      * rehashing all elements into the new table. This method is called when the
      * load factor of the hash table exceeds the specified threshold.
+     * 
+     * List is not cleared after reallocation. See
+     * {@link HashSetTest#testListClearAfterReallocation}.
      */
     @SuppressWarnings("unchecked")
     private void hashTableReallocation() {
@@ -276,7 +279,7 @@ public class HashSet<T> implements Set<T> {
         for (List<T> list : hashTable) {
             if (list != null) {
                 list.forEach(obj -> addObjInHashTable(obj, tempTable));
-                list.clear(); // Should be checked
+                // list.clear();
             }
         }
 
