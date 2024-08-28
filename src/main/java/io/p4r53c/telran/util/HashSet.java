@@ -210,19 +210,25 @@ public class HashSet<T> implements Set<T> {
     @SuppressWarnings("unchecked")
     @Override
     public T get(Object pattern) {
+        T result = null;
         int index = getIndex((T) pattern, hashTable.length);
 
         List<T> list = hashTable[index];
 
         if (list != null) {
-            for (T element : list) {
+            Iterator<T> iterator = list.iterator();
+
+            while (iterator.hasNext()) {
+                T element = iterator.next();
+                
                 if (element.equals(pattern)) {
-                    return element;
+                    result = element;
+                    break;
                 }
             }
         }
 
-        return null;
+        return result;
     }
 
     /**
