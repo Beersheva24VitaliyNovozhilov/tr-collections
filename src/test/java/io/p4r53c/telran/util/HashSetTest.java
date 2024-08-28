@@ -3,6 +3,7 @@ package io.p4r53c.telran.util;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -23,9 +24,12 @@ class HashSetTest extends SetTest {
 
     @Override
     protected void runTest(Integer[] expected) {
-        Integer[] actual = collection.stream().sorted().toArray(Integer[]::new);
-        Arrays.sort(expected);
-        assertArrayEquals(expected, actual);
+        Integer[] expectedSorted = Arrays.copyOf(expected, expected.length);
+        Arrays.sort(expectedSorted);
+        Integer[] actual = collection.stream().toArray(Integer[]::new);
+        Arrays.sort(actual);
+        assertArrayEquals(expectedSorted, actual);
+        assertEquals(expected.length, collection.size());
     }
 
     /**
