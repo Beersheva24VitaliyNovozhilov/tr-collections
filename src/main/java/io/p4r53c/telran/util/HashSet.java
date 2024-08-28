@@ -285,7 +285,7 @@ public class HashSet<T> implements Set<T> {
         for (List<T> list : hashTable) {
             if (list != null) {
                 list.forEach(obj -> addObjInHashTable(obj, tempTable));
-                // list.clear();
+                list.clear();
             }
         }
 

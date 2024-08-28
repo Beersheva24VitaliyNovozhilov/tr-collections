@@ -8,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.InvocationTargetException;
@@ -44,9 +43,9 @@ class HashSetTest extends SetTest {
      * cleared.
      * <p>
      * Expected outcome: All lists in the hash table should be cleared after
-     * reallocation. But it doesn't.
+     * reallocation.
      */
-    @Disabled("List is not cleared after reallocation")
+    
     @Test
     void testListClearAfterReallocation() {
         HashSet<Integer> set = new HashSet<>(4, 0.75f);
@@ -56,16 +55,19 @@ class HashSetTest extends SetTest {
         set.add(3);
         set.add(4);
 
+        List<Integer>[] oldHashTable = set.hashTable;
+
         try {
+
             Method method = HashSet.class.getDeclaredMethod("hashTableReallocation");
 
             method.setAccessible(true);
 
-            method.invoke(set); // Explicitly invoke reallocation. It should clear all lists, but it doesn't.
+            method.invoke(set);
 
-            for (List<Integer> list : set.hashTable) {
+            for (List<Integer> list : oldHashTable) {
                 if (list != null) {
-                    assertTrue(list.isEmpty()); // expected: <true> but was: <false>
+                    assertTrue(list.isEmpty(), "List should be cleared");
                 }
             }
 
