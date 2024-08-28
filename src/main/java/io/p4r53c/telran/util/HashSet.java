@@ -275,7 +275,7 @@ public class HashSet<T> implements Set<T> {
      * rehashing all elements into the new table. This method is called when the
      * load factor of the hash table exceeds the specified threshold.
      * 
-     * List is not cleared after reallocation. See
+     * List is cleared after reallocation. See
      * {@link HashSetTest#testListClearAfterReallocation}.
      */
     @SuppressWarnings("unchecked")

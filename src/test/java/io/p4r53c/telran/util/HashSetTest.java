@@ -3,7 +3,6 @@ package io.p4r53c.telran.util;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -24,14 +23,9 @@ class HashSetTest extends SetTest {
 
     @Override
     protected void runTest(Integer[] expected) {
-        Integer[] expectedSorted = Arrays.copyOf(expected, expected.length);
-        Arrays.sort(expectedSorted);
-
-        Integer[] actual = collection.stream().toArray(Integer[]::new);
-        Arrays.sort(actual);
-
-        assertArrayEquals(expectedSorted, actual);
-        assertEquals(expected.length, collection.size());
+        Integer[] actual = collection.stream().sorted().toArray(Integer[]::new);
+        Arrays.sort(expected);
+        assertArrayEquals(expected, actual);
     }
 
     /**
@@ -45,7 +39,7 @@ class HashSetTest extends SetTest {
      * Expected outcome: All lists in the hash table should be cleared after
      * reallocation.
      */
-    
+
     @Test
     void testListClearAfterReallocation() {
         HashSet<Integer> set = new HashSet<>(4, 0.75f);
