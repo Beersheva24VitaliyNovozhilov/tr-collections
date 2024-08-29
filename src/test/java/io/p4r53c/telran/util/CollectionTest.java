@@ -83,10 +83,14 @@ public abstract class CollectionTest {
         assertThrowsExactly(IllegalStateException.class, () -> iterator.remove());
     }
 
-    // GitHub Actions workers can be slow and the test can fail during the build in
-    // pipeline.
-    // So I set a much larger timeout. This shows that such tests are also
-    // not a very good solution.
+    /**
+     * Tests the performance of the collection.
+     *
+     * GitHub Actions workers can be slow and the test can fail during the build in
+     * pipeline. So I set a much larger timeout. This shows that such tests are also
+     * not a very good solution.
+     * 
+     */
     @Test
     @Timeout(value = 5000, unit = TimeUnit.MILLISECONDS)
     void testPerformance() {
