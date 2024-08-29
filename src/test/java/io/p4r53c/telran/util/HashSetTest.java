@@ -69,6 +69,8 @@ class HashSetTest extends SetTest {
                 }
             }
 
+            method.setAccessible(false);
+
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             fail("Reflection failed: " + e.getMessage());
         }
