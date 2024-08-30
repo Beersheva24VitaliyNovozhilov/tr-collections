@@ -76,8 +76,6 @@ public class TreeSet<T> implements Set<T> {
             prev = null;
         }
 
-        // I think that the following methods are intended only for iterator
-
         /**
          * Returns the least node from the given node in the tree.
          *
@@ -172,22 +170,6 @@ public class TreeSet<T> implements Set<T> {
             result = true;
         }
         return result;
-    }
-
-    /**
-     * Returns the node with the greatest value from the given node.
-     *
-     * @param node the node from which to search for the greatest node
-     * @return the node with the greatest value, or null if the given node is null
-     */
-    private Node<T> getGreatestFrom(Node<T> node) {
-        if (node != null) {
-            while (node.right != null) {
-                node = node.right;
-            }
-        }
-
-        return node;
     }
 
     /**
@@ -404,5 +386,21 @@ public class TreeSet<T> implements Set<T> {
         node.parent = null;
         node.left = null;
         node.right = null;
+    }
+
+    /**
+     * Returns the node with the greatest value from the given node.
+     *
+     * @param node the node from which to search for the greatest node
+     * @return the node with the greatest value, or null if the given node is null
+     */
+    private Node<T> getGreatestFrom(Node<T> node) {
+        if (node != null) {
+            while (node.right != null) {
+                node = node.right;
+            }
+        }
+
+        return node;
     }
 }
