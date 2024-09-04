@@ -11,6 +11,7 @@
 * CW/HW 22 - Iterator remove/removeIf in ArrayList
 * CW/HW 23 - Set, HashSet, Iterator in HashSet
 * CW/HW 24 - TreeSet
+* CW/HW 25 - Map, AbstractMap, HashMap, TreeMap, Entries
 
 ## Contributing
 
