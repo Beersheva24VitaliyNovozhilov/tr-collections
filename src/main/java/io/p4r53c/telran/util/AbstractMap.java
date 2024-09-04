@@ -1,5 +1,7 @@
 package io.p4r53c.telran.util;
 
+import java.util.Comparator;
+
 /**
  * An abstract implementation of the {@link Map} interface. This class provides
  * most of the methods of the interface, leaving the implementation of the
@@ -79,10 +81,10 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     @Override
     public boolean containsKey(Object key) {
-        return set.stream()
-                .anyMatch(e -> e.getKey().equals(key));
+        return key != null && set.get(new Entry<>((K) key, null)) != null;
     }
 
     /**
