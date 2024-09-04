@@ -1,7 +1,5 @@
 package io.p4r53c.telran.util;
 
-import java.util.Comparator;
-
 /**
  * An abstract implementation of the {@link Map} interface. This class provides
  * most of the methods of the interface, leaving the implementation of the
