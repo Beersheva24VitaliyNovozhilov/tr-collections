@@ -13,7 +13,7 @@ import java.util.NoSuchElementException;
  *
  * @param <T> type of elements in the list
  */
-public class TreeSet<T> implements Set<T> {
+public class TreeSet<T> implements SortedSet<T> {
 
     private Node<T> root;
     private Comparator<T> comparator;
@@ -74,24 +74,6 @@ public class TreeSet<T> implements Set<T> {
 
             removeNode(prev);
             prev = null;
-        }
-
-        /**
-         * Returns the least node from the given node in the tree.
-         *
-         * @param node the node to start from
-         * @return the least node from the given node, or null if the tree is
-         *         empty
-         */
-        private Node<T> getLeastNodeFrom(Node<T> node) {
-            if (node != null) {
-
-                while (node.left != null) {
-                    node = node.left;
-                }
-            }
-
-            return node;
         }
 
         /**
@@ -402,5 +384,91 @@ public class TreeSet<T> implements Set<T> {
         }
 
         return node;
+    }
+
+    /**
+     * Returns the least node from the given node in the tree.
+     *
+     * @param node the node to start from
+     * @return the least node from the given node, or null if the tree is
+     *         empty
+     */
+    private Node<T> getLeastNodeFrom(Node<T> node) {
+        if (node != null) {
+
+            while (node.left != null) {
+                node = node.left;
+            }
+        }
+
+        return node;
+    }
+
+    /**
+     * Returns the nearest value to the given key in the set. If the given key
+     * is not present in the set, the nearest value is either the greatest value
+     * less than the given key (if the given key is greater than the given
+     * key), or the least value greater than the given key (if the given key is
+     * less than the given key). If the given key is equal to the given key,
+     * the given key is returned.
+     *
+     * @param key          the key to look up
+     * @param isLowerBound true if the nearest value should be the greatest
+     *                     value less than the given key, false if the nearest
+     *                     value should be the least value greater than the
+     *                     given key
+     * @return the nearest value to the given key, or null if the set is empty
+     */
+    private T getNearestObj(T key, boolean isLowerBound) {
+        T result = null;
+
+        int comparatorResult = 0;
+
+        Node<T> current = root;
+
+        while (current != null && (comparatorResult = comparator.compare(key, current.obj)) != 0) {
+            if ((comparatorResult < 0 && !isLowerBound) || (comparatorResult > 0 && isLowerBound)) {
+                result = current.obj;
+            }
+
+            current = comparatorResult < 0 ? current.left : current.right;
+        }
+
+        return current == null ? result : current.obj;
+    }
+
+    @Override
+    public T first() {
+        return root == null ? null : getLeastNodeFrom(root).obj;
+    }
+
+    @Override
+    public T last() {
+        return root == null ? null : getGreatestFrom(root).obj;
+    }
+
+    @Override
+    public T floor(T key) {
+        return getNearestObj(key, true);
+    }
+
+    @Override
+    public T ceiling(T key) {
+        return getNearestObj(key, false);
+    }
+
+    @Override
+    public SortedSet<T> subSet(T from, T to) {
+        // from ceiling to floor, inclusive
+        TreeSet<T> result = new TreeSet<>(comparator);
+
+        T current = floor(from);
+
+        while (current != null && comparator.compare(current, to) <= 0) {
+            result.add(current);
+            current = ceiling(current);
+        }
+
+        return result;
     }
 }

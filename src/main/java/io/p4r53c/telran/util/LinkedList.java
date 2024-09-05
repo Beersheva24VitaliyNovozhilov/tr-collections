@@ -20,7 +20,7 @@ public class LinkedList<T> implements List<T> {
 
     private int size = 0;
 
-    private static class Node<T> {
+    protected static class Node<T> {
 
         T obj;
 
@@ -98,8 +98,6 @@ public class LinkedList<T> implements List<T> {
     public boolean isEmpty() {
         return size == 0;
     }
-
-   
 
     /**
      * Returns an iterator over the elements of the list.
@@ -203,7 +201,7 @@ public class LinkedList<T> implements List<T> {
      * @param index the index of the node to be returned
      * @return the node at the specified index in the list
      */
-    private Node<T> getNode(int index) {
+    protected Node<T> getNode(int index) {
         return index < size / 2 ? getNodeFromHead(index) : getNodeFromTail(index);
     }
 
@@ -245,7 +243,7 @@ public class LinkedList<T> implements List<T> {
      * @param node  the node to be added
      * @param index the index at which the node is to be added
      */
-    private void addNode(Node<T> node, int index) {
+    protected void addNode(Node<T> node, int index) {
         if (index == 0) {
             addHead(node);
         } else if (index == size) {
@@ -307,7 +305,7 @@ public class LinkedList<T> implements List<T> {
      * @param node the node to be removed
      * 
      */
-    private void removeNode(Node<T> node) {
+    protected void removeNode(Node<T> node) {
         if (head == node) {
             removeHead();
         } else if (tail == node) {

@@ -74,11 +74,14 @@ public interface List<T> extends Collection<T> {
     @Override
     default boolean remove(T pattern) {
         boolean removed = false;
+
         int index = indexOf(pattern);
+
         if (index >= 0) {
             remove(index);
             removed = true;
         }
+
         return removed;
     }
 
