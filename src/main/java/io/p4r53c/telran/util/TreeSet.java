@@ -228,7 +228,7 @@ public class TreeSet<T> implements SortedSet<T> {
     public SortedSet<T> subSet(T from, T to) {
         TreeSet<T> subSet = new TreeSet<>(comparator);
 
-        Node<T> current = findStartingNode(from);
+        Node<T> current = getNode(ceiling(from));
 
         while (isWithinBounds(current, to)) {
             subSet.add(current.obj);
@@ -496,26 +496,6 @@ public class TreeSet<T> implements SortedSet<T> {
         }
 
         return current == null ? result : current.obj;
-    }
-
-    /**
-     * Finds the starting node for the subSet operation. If the node is not in
-     * the tree, it gets the parent of the node. If the parent is less than the
-     * given node, it gets the rightmost node of the parent.
-     * 
-     * @param from the node to find the starting node for
-     * @return the starting node for the subSet operation
-     */
-    private Node<T> findStartingNode(T from) {
-        Node<T> current = getNode(from);
-
-        if (current == null) {
-            current = getParentOrNode(from); // If the node is not in the tree, get the parent
-            if (comparator.compare(current.obj, from) < 0) {
-                current = getGreaterParent(current);
-            }
-        }
-        return current;
     }
 
     /**
