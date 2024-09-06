@@ -12,6 +12,7 @@
 * CW/HW 23 - Set, HashSet, Iterator in HashSet
 * CW/HW 24 - TreeSet
 * CW/HW 25 - Map, AbstractMap, HashMap, TreeMap, Entries
+* CW/HW 26 - LinkedHashSet, SortedSet
 
 ## Contributing
 

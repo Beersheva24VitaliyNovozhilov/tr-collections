@@ -53,8 +53,8 @@ public interface SortedSet<T> extends Set<T> {
      * returned set is backed by this set, so changes in the returned set are
      * reflected in this set, and vice versa.
      * 
-     * @param fromElement the lowest element to be included in the returned set
-     * @param toElement   the highest element to be included in the returned set
+     * @param from the lowest element to be included in the returned set
+     * @param to   the highest element to be included in the returned set
      * @return a view of the specified range of this set
      */
     SortedSet<T> subSet(T from, T to);

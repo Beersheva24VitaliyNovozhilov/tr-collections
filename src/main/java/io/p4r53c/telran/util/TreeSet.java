@@ -75,39 +75,6 @@ public class TreeSet<T> implements SortedSet<T> {
             removeNode(prev);
             prev = null;
         }
-
-        /**
-         * Returns the parent of the given node that is greater than the node
-         * or null if the node is the greatest in the tree.
-         *
-         * @param current the node
-         * @return the parent of the given node that is greater than the node
-         *         or null if the node is the greatest in the tree
-         */
-        private Node<T> getGreaterParent(Node<T> current) {
-            Node<T> parent = current.parent;
-
-            while (parent != null && parent.right == current) {
-                current = current.parent;
-                parent = current.parent;
-            }
-
-            return parent;
-        }
-
-        /**
-         * Returns the next node in the tree set iteration order.F
-         *
-         * If the given node has a right child, the next node is the leftmost node
-         * in the right subtree. Otherwise, the next node is the closest ancestor
-         * of the given node that is to the right of the given node.
-         *
-         * @param current the current node
-         * @return the next node in the tree set iteration order
-         */
-        private Node<T> getCurrentNode(Node<T> current) {
-            return current.right != null ? getLeastNodeFrom(current.right) : getGreaterParent(current);
-        }
     }
 
     /**
@@ -208,6 +175,67 @@ public class TreeSet<T> implements SortedSet<T> {
     public T get(Object pattern) {
         Node<T> node = getNode((T) pattern);
         return node == null ? null : node.obj;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public T first() {
+        return root == null ? null : getLeastNodeFrom(root).obj;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public T last() {
+        return root == null ? null : getGreatestFrom(root).obj;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public T floor(T key) {
+        return getNearestObj(key, true);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public T ceiling(T key) {
+        return getNearestObj(key, false);
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * Note: I think is not effective to use methods celling() and floor() here. But
+     * theoretically is possible.
+     * 
+     * Each call to ceiling() will start searching again from the root of the tree,
+     * increasing the complexity to O(n * log n), where n is the number of elements
+     * in the subset. This is much worse than a linear traversal of the tree using
+     * an iterator or infix traversal, which can be done in O(n).
+     * 
+     * Actually, floor() and ceiling() methods do not provide tree iteration, they
+     * are designed to find the closest values, but not to move between them.
+     * 
+     */
+    @Override
+    public SortedSet<T> subSet(T from, T to) {
+        TreeSet<T> subSet = new TreeSet<>(comparator);
+
+        Node<T> current = findStartingNode(from);
+
+        while (isWithinBounds(current, to)) {
+            subSet.add(current.obj);
+            current = getNextNode(current);
+        }
+
+        return subSet;
     }
 
     /**
@@ -387,6 +415,39 @@ public class TreeSet<T> implements SortedSet<T> {
     }
 
     /**
+     * Returns the parent of the given node that is greater than the node
+     * or null if the node is the greatest in the tree.
+     *
+     * @param current the node
+     * @return the parent of the given node that is greater than the node
+     *         or null if the node is the greatest in the tree
+     */
+    private Node<T> getGreaterParent(Node<T> current) {
+        Node<T> parent = current.parent;
+
+        while (parent != null && parent.right == current) {
+            current = current.parent;
+            parent = current.parent;
+        }
+
+        return parent;
+    }
+
+    /**
+     * Returns the next node in the tree set iteration order.F
+     *
+     * If the given node has a right child, the next node is the leftmost node
+     * in the right subtree. Otherwise, the next node is the closest ancestor
+     * of the given node that is to the right of the given node.
+     *
+     * @param current the current node
+     * @return the next node in the tree set iteration order
+     */
+    private Node<T> getCurrentNode(Node<T> current) {
+        return current.right != null ? getLeastNodeFrom(current.right) : getGreaterParent(current);
+    }
+
+    /**
      * Returns the least node from the given node in the tree.
      *
      * @param node the node to start from
@@ -437,38 +498,49 @@ public class TreeSet<T> implements SortedSet<T> {
         return current == null ? result : current.obj;
     }
 
-    @Override
-    public T first() {
-        return root == null ? null : getLeastNodeFrom(root).obj;
-    }
+    /**
+     * Finds the starting node for the subSet operation. If the node is not in
+     * the tree, it gets the parent of the node. If the parent is less than the
+     * given node, it gets the rightmost node of the parent.
+     * 
+     * @param from the node to find the starting node for
+     * @return the starting node for the subSet operation
+     */
+    private Node<T> findStartingNode(T from) {
+        Node<T> current = getNode(from);
 
-    @Override
-    public T last() {
-        return root == null ? null : getGreatestFrom(root).obj;
-    }
-
-    @Override
-    public T floor(T key) {
-        return getNearestObj(key, true);
-    }
-
-    @Override
-    public T ceiling(T key) {
-        return getNearestObj(key, false);
-    }
-
-    @Override
-    public SortedSet<T> subSet(T from, T to) {
-        // from ceiling to floor, inclusive
-        TreeSet<T> result = new TreeSet<>(comparator);
-
-        T current = floor(from);
-
-        while (current != null && comparator.compare(current, to) <= 0) {
-            result.add(current);
-            current = ceiling(current);
+        if (current == null) {
+            current = getParentOrNode(from); // If the node is not in the tree, get the parent
+            if (comparator.compare(current.obj, from) < 0) {
+                current = getGreaterParent(current);
+            }
         }
+        return current;
+    }
 
-        return result;
+    /**
+     * Checks if the current node is within the bounds of the subSet operation.
+     * The current node is within the bounds if it is not null and its value is
+     * less than the given upper bound.
+     * 
+     * @param current the current node
+     * @param to      the upper bound of the subSet
+     * @return true if the current node is within the bounds, false otherwise
+     */
+    private boolean isWithinBounds(Node<T> current, T to) {
+        return current != null && comparator.compare(current.obj, to) < 0;
+    }
+
+    /**
+     * Returns the next node in the tree set iteration order. If the given node
+     * has a right child, the next node is the leftmost node in the right
+     * subtree. Otherwise, the next node is the closest ancestor of the given
+     * node that is to the right of the given node.
+     * 
+     * @param current the current node
+     * @return the next node in the tree set iteration order
+     */
+    private Node<T> getNextNode(Node<T> current) {
+        return getCurrentNode(current);
     }
 }

@@ -2,24 +2,20 @@ package io.p4r53c.telran.util;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-//@Disabled
-class SortedSetTest extends SetTest {
-    // { 3, -10, 20, 1, 10, 8, 100, 17 };
+abstract class SortedSetTest extends SetTest {
+
     SortedSet<Integer> sortedSet;
 
     @Override
     void setUp() {
-        // For some reason, this isn't invoked... Collection is null.
+        // Previously, there was no entry point to this code. This class should be made
+        // abstract, TreeSetTest should be inherited from this class and entry point
+        // should be from there.
         super.setUp();
-        assertNotNull(collection);
-        assertTrue(collection instanceof SortedSet);
         sortedSet = (SortedSet<Integer>) collection;
     }
 
@@ -42,7 +38,7 @@ class SortedSetTest extends SetTest {
     }
 
     @Test
-    void ceilingTest() {
+    void testCeiling() {
         assertEquals(3, sortedSet.ceiling(3));
         assertEquals(8, sortedSet.ceiling(4));
         assertNull(sortedSet.ceiling(256));
