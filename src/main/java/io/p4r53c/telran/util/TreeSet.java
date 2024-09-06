@@ -211,18 +211,6 @@ public class TreeSet<T> implements SortedSet<T> {
 
     /**
      * {@inheritDoc}
-     * 
-     * Note: I think is not effective to use methods celling() and floor() here. But
-     * theoretically is possible.
-     * 
-     * Each call to ceiling() will start searching again from the root of the tree,
-     * increasing the complexity to O(n * log n), where n is the number of elements
-     * in the subset. This is much worse than a linear traversal of the tree using
-     * an iterator or infix traversal, which can be done in O(n).
-     * 
-     * Actually, floor() and ceiling() methods do not provide tree iteration, they
-     * are designed to find the closest values, but not to move between them.
-     * 
      */
     @Override
     public SortedSet<T> subSet(T from, T to) {
