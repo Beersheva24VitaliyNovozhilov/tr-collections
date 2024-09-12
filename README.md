@@ -13,6 +13,7 @@
 * CW/HW 24 - TreeSet
 * CW/HW 25 - Map, AbstractMap, HashMap, TreeMap, Entries
 * CW/HW 26 - LinkedHashSet, SortedSet
+* CW/HW 28 - Non-linear recursion in TreeSet
 
 ## Contributing
 

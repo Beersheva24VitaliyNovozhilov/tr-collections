@@ -16,8 +16,13 @@ import java.util.NoSuchElementException;
 public class TreeSet<T> implements SortedSet<T> {
 
     private Node<T> root;
+
     private Comparator<T> comparator;
+
     int size;
+
+    private String printSymbol = " ";
+    private int symbolsPerLevel = 2;
 
     public TreeSet(Comparator<T> comparator) {
         this.comparator = comparator;
@@ -75,6 +80,14 @@ public class TreeSet<T> implements SortedSet<T> {
             removeNode(prev);
             prev = null;
         }
+    }
+
+    public void setPrintSymbol(String printSymbol) {
+        this.printSymbol = printSymbol;
+    }
+
+    public void setSymbolsPerLevel(int symbolsPerLevel) {
+        this.symbolsPerLevel = symbolsPerLevel;
     }
 
     /**
@@ -224,6 +237,48 @@ public class TreeSet<T> implements SortedSet<T> {
         }
 
         return subSet;
+    }
+
+    /**
+     * Prints the tree in a rotated manner.
+     * The output is done to the console.
+     */
+    public void displayTreeRotated() {
+        displayTreeRotated(root, 0);
+    }
+
+    /**
+     * Prints the tree in a rotated manner with parent and children.
+     * The output is done to the console.
+     */
+    public void displayTreeParentChildren() {
+        displayTreeParentChildren(root, 0);
+    }
+
+    /**
+     * Returns the width of the tree.
+     * 
+     * @return the width of the tree
+     */
+    public int width() {
+        return width(root);
+    }
+
+    /**
+     * Returns the height of the tree.
+     * 
+     * @return the height of the tree
+     */
+    public int height() {
+        return height(root);
+    }
+
+    /**
+     * Inverts the tree by reversing the comparator and inverting the tree in place.
+     */
+    public void inversion() {
+        comparator = comparator.reversed();
+        inversion(root);
     }
 
     /**
@@ -510,5 +565,105 @@ public class TreeSet<T> implements SortedSet<T> {
      */
     private Node<T> getNextNode(Node<T> current) {
         return getCurrentNode(current);
+    }
+
+    /**
+     * Displays the tree rotated to the right by the given level, with the root
+     * object displayed at the given level. The right subtree is displayed first,
+     * then the root object, and finally the left subtree.
+     * 
+     * @param root  the root node of the tree
+     * @param level the level of the root node
+     */
+    private void displayTreeRotated(Node<T> root, int level) {
+        if (root != null) {
+            displayTreeRotated(root.right, level + 1);
+            displayRootObject(root.obj, level);
+            displayTreeRotated(root.left, level + 1);
+        }
+    }
+
+    /**
+     * Displays the tree in parent-children order, with the root object displayed
+     * at the given level. The root object is displayed first, then the left
+     * subtree, and finally the right subtree.
+     * 
+     * @param root  the root node of the tree
+     * @param level the level of the root node
+     */
+    private void displayTreeParentChildren(Node<T> root, int level) {
+        if (root != null) {
+            displayRootObject(root.obj, level);
+            displayTreeParentChildren(root.left, level + 1);
+            displayTreeParentChildren(root.right, level + 1);
+        }
+    }
+
+    /**
+     * Displays the given object at the given level in the tree. The object is
+     * displayed indented with the given level, with each level indented by
+     * {@link #symbolsPerLevel} symbols. The object is displayed with a newline
+     * character after it.
+     * 
+     * @param obj   the object to be displayed
+     * @param level the level of the object in the tree
+     */
+    private void displayRootObject(T obj, int level) {
+        System.out.printf("%s%s%n", printSymbol.repeat(level * symbolsPerLevel), obj);
+    }
+
+    /**
+     * Inverts the tree by swapping the left and right subtrees of each node.
+     * 
+     * @param root the root node of the tree
+     */
+    private void inversion(Node<T> root) {
+        if (root != null) {
+
+            // Swap left and right
+            Node<T> node = root.left;
+            root.left = root.right;
+            root.right = node;
+
+            inversion(root.left);
+            inversion(root.right);
+        }
+    }
+
+    /**
+     * Calculates the width of the given tree. The width of the tree is defined
+     * as the number of nodes in the widest level of the tree.
+     * 
+     * @param root the root of the tree
+     * @return the width of the tree
+     */
+    private int width(Node<T> root) {
+        int result = 0;
+
+        if (root != null) {
+            result = root.left == null && root.right == null ? 1 : width(root.left) + width(root.right);
+        }
+
+        return result;
+    }
+
+    /**
+     * Calculates the height of the given tree. The height of the tree is
+     * defined as the number of nodes along the longest path from the root
+     * node down to the farthest leaf node.
+     * 
+     * @param root the root of the tree
+     * @return the height of the tree
+     */
+    private int height(Node<T> root) {
+        int result = 0;
+
+        if (root != null) {
+            int left = height(root.left);
+            int right = height(root.right);
+            result = 1 + Math.max(left, right);
+        }
+
+        return result;
     }
 }
