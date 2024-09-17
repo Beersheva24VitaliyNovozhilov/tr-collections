@@ -4,6 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+import java.util.Arrays;
+import java.util.Random;
+import java.util.stream.IntStream;
+
 import org.junit.jupiter.api.Test;
 
 abstract class SortedSetTest extends SetTest {
@@ -52,4 +56,30 @@ abstract class SortedSetTest extends SetTest {
         assertArrayEquals(expected, actual);
     }
 
+    @Override
+    protected void fillBigCollection() {
+        Integer[] array = getBigArrayCW();
+        Arrays.stream(array).forEach(collection::add);
+
+    }
+
+    protected Integer[] getBigArrayCW() {
+        // return IntStream.rangeClosed(1, N_ELEMENTS).boxed().toArray(Integer[]::new);
+        return new Random().ints().distinct().limit(N_ELEMENTS).boxed().toArray(Integer[]::new);
+    }
+
+    @Test
+    protected Integer[] getBigArrayHW() {
+        return IntStream.rangeClosed(1, N_ELEMENTS).boxed().toArray(Integer[]::new);
+    }
+
+    @Override
+    protected void runTest(Integer[] expected) {
+        Integer[] expectedSorted = Arrays.copyOf(expected, expected.length);
+        Arrays.sort(expectedSorted);
+        Integer[] actual = collection.stream().toArray(Integer[]::new);
+        // Arrays.sort(actual);
+        assertArrayEquals(expectedSorted, actual);
+        assertEquals(expected.length, collection.size());
+    }
 }

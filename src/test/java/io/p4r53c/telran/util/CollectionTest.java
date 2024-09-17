@@ -27,7 +27,7 @@ public abstract class CollectionTest {
 
     Integer[] array = { 3, -10, 20, 1, 10, 8, 100, 17 };
 
-    private static final int N_ELEMENTS = 2_000_000;
+    protected static final int N_ELEMENTS = 1_048_575;
 
     private Random random = new Random();
 
@@ -96,7 +96,7 @@ public abstract class CollectionTest {
     void testPerformance() {
         collection.clear();
 
-        IntStream.range(0, N_ELEMENTS).forEach(i -> collection.add(random.nextInt()));
+        fillBigCollection();
         collection.removeIf(n -> n % 2 == 0);
         assertTrue(collection.stream().allMatch(n -> n % 2 != 0));
 
@@ -210,5 +210,9 @@ public abstract class CollectionTest {
     protected void runTest(Integer[] expected) {
         assertArrayEquals(expected, collection.stream().toArray(Integer[]::new));
         assertEquals(expected.length, collection.size());
+    }
+
+    protected void fillBigCollection() {
+        IntStream.range(0, N_ELEMENTS).forEach(i -> collection.add(random.nextInt()));
     }
 }

@@ -282,6 +282,16 @@ public class TreeSet<T> implements SortedSet<T> {
     }
 
     /**
+     * Balances the tree by sorting the elements and rebuilding the tree. The
+     * resulting tree is a balanced tree with the same elements as the original
+     * tree.
+     */
+    public void balance() {
+        Node<T>[] nodes = getSortedNodesArray();
+        root = balanceArray(nodes, 0, nodes.length - 1, null);
+    }
+
+    /**
      * Adds a node after its parent in the tree.
      *
      * @param node the node to be added
@@ -666,4 +676,53 @@ public class TreeSet<T> implements SortedSet<T> {
 
         return result;
     }
+
+    /**
+     * Creates a balanced tree from the given array of nodes. The tree is
+     * balanced by choosing the middle element of the array as the root node
+     * and recursively creating the left and right subtrees from the left and
+     * right halves of the array, respectively.
+     * 
+     * @param array  the array of nodes to be balanced
+     * @param left   the start index of the array
+     * @param right  the end index of the array
+     * @param parent the parent of the root node of the tree
+     * @return the root node of the balanced tree
+     */
+    private Node<T> balanceArray(Node<T>[] array, int left, int right, Node<T> parent) {
+        Node<T> rootNode = null;
+
+        if (left <= right) {
+            int middle = (left + right) / 2;
+
+            rootNode = array[middle];
+            rootNode.parent = parent;
+
+            rootNode.left = balanceArray(array, left, middle - 1, rootNode);
+            rootNode.right = balanceArray(array, middle + 1, right, rootNode);
+        }
+
+        return rootNode;
+    }
+
+    /**
+     * Returns an array of nodes in the tree in ascending order. The array is
+     * created by traversing the tree in an in-order fashion, starting from the
+     * least node.
+     * 
+     * @return the array of nodes
+     */
+    @SuppressWarnings("unchecked")
+    private Node<T>[] getSortedNodesArray() {
+        Node<T>[] array = new Node[size];
+        Node<T> current = getLeastNodeFrom(root);
+
+        for (int i = 0; i < size; i++) {
+            array[i] = current;
+            current = getCurrentNode(current);
+        }
+
+        return array;
+    }
+
 }
